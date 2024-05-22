@@ -414,18 +414,16 @@ const muteVolume = function () {
   if (audioSource.volume === 0) {
     audioSource.volume = lastVolume;
     volumeRange.value = lastVolume;
-    volumeBtn.textContent = "volume_up";
+    volumeBtn.innerHTML = '<span class="material-symbols-rounded">volume_up</span>';
   } else {
     lastVolume = audioSource.volume;
     audioSource.volume = 0;
     volumeRange.value = 0;
-    volumeBtn.textContent = "volume_off";
+    volumeBtn.innerHTML = '<span class="material-symbols-rounded">volume_off</span>';
   }
 
   updateRangeFill();
 }
-
-volumeBtn.addEventListener("click", muteVolume);
 
 /**
  * DOWNLOAD BUTTON
