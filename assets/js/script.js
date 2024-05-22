@@ -396,43 +396,45 @@ prevBtn.addEventListener("click", prevMusic);
  * mute volume when volumn button is clicked
  * and change volume when range is changed
  */
-const volumeBtn = document.querySelector("[data-volume-btn]");
-const volumeRange = document.querySelector("[data-volume]");
-
-let lastVolume = 0.5;
-audioSource.volume = lastVolume;
+const playerVolumeRange = document.querySelector("[data-volume]");
+const playerVolumeBtn = document.querySelector("[data-volume-btn]");
 
 const changeVolume = function () {
-  audioSource.volume = volumeRange.value;
-  lastVolume = volumeRange.value;
-  volumeBtn.textContent = (volumeRange.value === 0) ? "volume_off" : "volume_up";
+  audioSource.volume = playerVolumeRange.value;
+  audioSource.muted = false;
+
+  if (audioSource.volume <= 0.1) {
+    playerVolumeBtn.children[0].textContent = "volume_mute";
+  } else if (audioSource.volume <= 0.5) {
+    playerVolumeBtn.children[0].textContent = "volume_down";
+  } else {
+    playerVolumeBtn.children[0].textContent = "volume_up";
+  }
 }
 
-volumeRange.addEventListener("input", changeVolume);
+playerVolumeRange.addEventListener("input", changeVolume);
+
+
+/**
+ * MUTE MUSIC
+ */
 
 const muteVolume = function () {
-  if (audioSource.volume === 0) {
-    audioSource.volume = lastVolume;
-    volumeRange.value = lastVolume;
-    volumeBtn.textContent = "volume_up";
+  if (!audioSource.muted) {
+    audioSource.muted = true;
+    playerVolumeBtn.children[0].textContent = "volume_off";
   } else {
-    lastVolume = audioSource.volume;
-    audioSource.volume = 0;
-    volumeRange.value = 0;
-    volumeBtn.textContent = "volume_off";
+    changeVolume();
   }
-
-  updateRangeFill();
 }
 
-volumeBtn.addEventListener("click", muteVolume); 
+playerVolumeBtn.addEventListener("click", muteVolume);
 
 /**
  * DOWNLOAD BUTTON
  *
  * download the currently playing music when clicked
- */
-const downloadBtn = document.createElement('button');
+ */const downloadBtn = document.createElement('button');
 downloadBtn.classList.add('btn-icon');
 downloadBtn.innerHTML = '<span class="material-symbols-rounded">download</span>';
 document.querySelector('.player-control.wrapper').appendChild(downloadBtn);
