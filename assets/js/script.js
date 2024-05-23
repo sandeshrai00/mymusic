@@ -117,17 +117,21 @@ const musicData = [
 /**
  * add eventListnere on all elements that are passed
  */
+
 const addEventOnElements = function (elements, eventType, callback) {
   for (let i = 0, len = elements.length; i < len; i++) {
     elements[i].addEventListener(eventType, callback);
   }
 }
 
+
+
 /**
  * PLAYLIST
- *
+ * 
  * add all music in playlist, from 'musicData'
  */
+
 const playlist = document.querySelector("[data-music-list]");
 
 for (let i = 0, len = musicData.length; i < len; i++) {
@@ -145,12 +149,15 @@ for (let i = 0, len = musicData.length; i < len; i++) {
   `;
 }
 
+
+
 /**
  * PLAYLIST MODAL SIDEBAR TOGGLE
- *
+ * 
  * show 'playlist' modal sidebar when click on playlist button in top app bar
  * and hide when click on overlay or any playlist-item
  */
+
 const playlistSideModal = document.querySelector("[data-playlist]");
 const playlistTogglers = document.querySelectorAll("[data-playlist-toggler]");
 const overlay = document.querySelector("[data-overlay]");
@@ -163,12 +170,15 @@ const togglePlaylist = function () {
 
 addEventOnElements(playlistTogglers, "click", togglePlaylist);
 
+
+
 /**
  * PLAYLIST ITEM
- *
+ * 
  * remove active state from last time played music
  * and add active state in clicked music
  */
+
 const playlistItems = document.querySelectorAll("[data-playlist-item]");
 
 let currentMusic = 0;
@@ -185,11 +195,14 @@ addEventOnElements(playlistItems, "click", function () {
   changePlaylistItem();
 });
 
+
+
 /**
  * PLAYER
- *
+ * 
  * change all visual information on player, based on current music
  */
+
 const playerBanner = document.querySelector("[data-player-banner]");
 const playerTitle = document.querySelector("[data-title]");
 const playerAlbum = document.querySelector("[data-album]");
@@ -234,11 +247,14 @@ const updateDuration = function () {
 
 audioSource.addEventListener("loadeddata", updateDuration);
 
+
+
 /**
  * PLAY MUSIC
- *
+ * 
  * play and pause music when click on play button
  */
+
 const playBtn = document.querySelector("[data-play-btn]");
 
 let playInterval;
@@ -257,8 +273,10 @@ const playMusic = function () {
 
 playBtn.addEventListener("click", playMusic);
 
+
 /** update running time while playing music */
-const playerRunningTime = document.querySelector("[data-running-time]");
+
+const playerRunningTime = document.querySelector("[data-running-time");
 
 const updateRunningTime = function () {
   playerSeekRange.value = audioSource.currentTime;
@@ -268,27 +286,34 @@ const updateRunningTime = function () {
   isMusicEnd();
 }
 
+
+
 /**
  * RANGE FILL WIDTH
- *
+ * 
  * change 'rangeFill' width, while changing range value
  */
+
 const ranges = document.querySelectorAll("[data-range]");
-const rangeFill = document.querySelectorAll("[data-range-fill]");
+const rangeFill = document.querySelector("[data-range-fill]");
 
 const updateRangeFill = function () {
-  for (let i = 0, len = ranges.length; i < len; i++) {
-    rangeFill[i].style.width = `${(ranges[i].value / ranges[i].max) * 100}%`;
-  }
+  let element = this || ranges[0];
+
+  const rangeValue = (element.value / element.max) * 100;
+  element.nextElementSibling.style.width = `${rangeValue}%`;
 }
 
 addEventOnElements(ranges, "input", updateRangeFill);
 
+
+
 /**
  * SEEK MUSIC
- *
+ * 
  * seek music while changing player seek range
  */
+
 const seek = function () {
   audioSource.currentTime = playerSeekRange.value;
   playerRunningTime.textContent = getTimecode(playerSeekRange.value);
@@ -296,22 +321,96 @@ const seek = function () {
 
 playerSeekRange.addEventListener("input", seek);
 
+
+
 /**
- * MUSIC END
- *
- * if current music ends, then play next music
+ * END MUSIC
  */
+
 const isMusicEnd = function () {
   if (audioSource.ended) {
-    nextMusic();
+    playBtn.classList.remove("active");
+    audioSource.currentTime = 0;
+    playerSeekRange.value = audioSource.currentTime;
+    playerRunningTime.textContent = getTimecode(audioSource.currentTime);
+    updateRangeFill();
   }
 }
 
+
+
 /**
- * REPEAT BUTTON
- *
- * repeat one music or all music when click repeat button
+ * SKIP TO NEXT MUSIC
  */
+
+const playerSkipNextBtn = document.querySelector("[data-skip-next]");
+
+const skipNext = function () {
+  lastPlayedMusic = currentMusic;
+
+  if (isShuffled) {
+    shuffleMusic();
+  } else {
+    currentMusic >= musicData.length - 1 ? currentMusic = 0 : currentMusic++;
+  }
+
+  changePlayerInfo();
+  changePlaylistItem();
+}
+
+playerSkipNextBtn.addEventListener("click", skipNext);
+
+
+
+/**
+ * SKIP TO PREVIOUS MUSIC
+ */
+
+const playerSkipPrevBtn = document.querySelector("[data-skip-prev]");
+
+const skipPrev = function () {
+  lastPlayedMusic = currentMusic;
+
+  if (isShuffled) {
+    shuffleMusic();
+  } else {
+    currentMusic <= 0 ? currentMusic = musicData.length - 1 : currentMusic--;
+  }
+
+  changePlayerInfo();
+  changePlaylistItem();
+}
+
+playerSkipPrevBtn.addEventListener("click", skipPrev);
+
+
+
+/**
+ * SHUFFLE MUSIC
+ */
+
+/** get random number for shuffle */
+const getRandomMusic = () => Math.floor(Math.random() * musicData.length);
+
+const shuffleMusic = () => currentMusic = getRandomMusic();
+
+const playerShuffleBtn = document.querySelector("[data-shuffle]");
+let isShuffled = false;
+
+const shuffle = function () {
+  playerShuffleBtn.classList.toggle("active");
+
+  isShuffled = isShuffled ? false : true;
+}
+
+playerShuffleBtn.addEventListener("click", shuffle);
+
+
+
+/**
+ * REPEAT MUSIC
+ */
+
 const playerRepeatBtn = document.querySelector("[data-repeat]");
 
 const repeat = function () {
@@ -327,71 +426,13 @@ const repeat = function () {
 playerRepeatBtn.addEventListener("click", repeat);
 
 
-/**
- * SHUFFLE
- *
- * change music item randomly
- */
-const shuffleBtn = document.querySelector("[data-shuffle]");
-
-let isShuffled = false;
-
-const shuffle = function () {
-  isShuffled = !isShuffled;
-  shuffleBtn.classList.toggle("active");
-}
-
-shuffleBtn.addEventListener("click", shuffle);
 
 /**
- * SKIP NEXT MUSIC
- *
- * if 'repeatMode' is 'repeat_one', then repeat current music
- * if 'isShuffled' is 'true', then change random music
- * if last music ends, then play first music
+ * MUSIC VOLUME
+ * 
+ * increase or decrease music volume when change the volume range
  */
-const nextBtn = document.querySelector("[data-skip-next]");
 
-const nextMusic = function () {
-  if (repeatMode === "repeat_one") {
-    audioSource.currentTime = 0;
-    playMusic();
-  } else if (isShuffled) {
-    let randomMusic = Math.floor(Math.random() * musicData.length);
-    currentMusic = randomMusic;
-    changePlayerInfo();
-    changePlaylistItem();
-  } else {
-    lastPlayedMusic = currentMusic;
-    currentMusic++;
-    if (currentMusic === musicData.length) currentMusic = 0;
-    changePlayerInfo();
-    changePlaylistItem();
-  }
-}
-
-nextBtn.addEventListener("click", nextMusic);
-/**
- * SKIP PREVIOUS MUSIC
- */
-const prevBtn = document.querySelector("[data-skip-prev]");
-
-const prevMusic = function () {
-  lastPlayedMusic = currentMusic;
-  currentMusic--;
-  if (currentMusic < 0) currentMusic = musicData.length - 1;
-  changePlayerInfo();
-  changePlaylistItem();
-}
-
-prevBtn.addEventListener("click", prevMusic);
-
-/**
- * VOLUME
- *
- * mute volume when volumn button is clicked
- * and change volume when range is changed
- */
 const playerVolumeRange = document.querySelector("[data-volume]");
 const playerVolumeBtn = document.querySelector("[data-volume-btn]");
 
@@ -425,23 +466,3 @@ const muteVolume = function () {
 }
 
 playerVolumeBtn.addEventListener("click", muteVolume);
-
-/**
- * DOWNLOAD BUTTON
- *
- * download the currently playing music when clicked
- */const downloadBtn = document.createElement('button');
-downloadBtn.classList.add('btn-icon');
-downloadBtn.innerHTML = '<span class="material-symbols-rounded">download</span>';
-document.querySelector('.player-control.wrapper').appendChild(downloadBtn);
-
-const downloadMusic = function () {
-  const link = document.createElement('a');
-  link.href = musicData[currentMusic].musicPath;
-  link.download = musicData[currentMusic].title;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-downloadBtn.addEventListener('click', downloadMusic);
