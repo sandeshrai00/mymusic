@@ -128,7 +128,7 @@ const addEventOnElements = function (elements, eventType, callback) {
 
 /**
  * PLAYLIST
- * 
+ *
  * add all music in playlist, from 'musicData'
  */
 
@@ -153,7 +153,7 @@ for (let i = 0, len = musicData.length; i < len; i++) {
 
 /**
  * PLAYLIST MODAL SIDEBAR TOGGLE
- * 
+ *
  * show 'playlist' modal sidebar when click on playlist button in top app bar
  * and hide when click on overlay or any playlist-item
  */
@@ -174,7 +174,7 @@ addEventOnElements(playlistTogglers, "click", togglePlaylist);
 
 /**
  * PLAYLIST ITEM
- * 
+ *
  * remove active state from last time played music
  * and add active state in clicked music
  */
@@ -199,7 +199,7 @@ addEventOnElements(playlistItems, "click", function () {
 
 /**
  * PLAYER
- * 
+ *
  * change all visual information on player, based on current music
  */
 
@@ -251,7 +251,7 @@ audioSource.addEventListener("loadeddata", updateDuration);
 
 /**
  * PLAY MUSIC
- * 
+ *
  * play and pause music when click on play button
  */
 
@@ -290,7 +290,7 @@ const updateRunningTime = function () {
 
 /**
  * RANGE FILL WIDTH
- * 
+ *
  * change 'rangeFill' width, while changing range value
  */
 
@@ -310,7 +310,7 @@ addEventOnElements(ranges, "input", updateRangeFill);
 
 /**
  * SEEK MUSIC
- * 
+ *
  * seek music while changing player seek range
  */
 
@@ -429,7 +429,7 @@ playerRepeatBtn.addEventListener("click", repeat);
 
 /**
  * MUSIC VOLUME
- * 
+ *
  * increase or decrease music volume when change the volume range
  */
 
@@ -466,3 +466,65 @@ const muteVolume = function () {
 }
 
 playerVolumeBtn.addEventListener("click", muteVolume);
+
+// JavaScript code to handle auto-sleep feature
+const autoSleepBtn = document.getElementById("auto-sleep-btn");
+let autoSleepTimeout;
+
+// Function to start auto-sleep countdown
+const startAutoSleep = () => {
+  // Clear existing timeout, if any
+  clearTimeout(autoSleepTimeout);
+
+  // Set new timeout to pause music after 5 minutes (adjust as needed)
+  autoSleepTimeout = setTimeout(() => {
+    // Pause music
+    audioSource.pause();
+    playBtn.classList.remove("active");
+  }, 60 * 60 * 1000); // 5 minutes
+};
+
+// Function to reset auto-sleep countdown on user interaction
+const resetAutoSleep = () => {
+  startAutoSleep();
+  // Add any additional interactions you want to reset auto-sleep here
+};
+
+// Attach event listener to button for toggling auto-sleep
+autoSleepBtn.addEventListener("click", () => {
+  autoSleepBtn.classList.toggle("active");
+  if (autoSleepBtn.classList.contains("active")) {
+    startAutoSleep();
+  } else {
+    clearTimeout(autoSleepTimeout);
+  }
+});
+
+// Add event listeners to player controls to reset auto-sleep countdown
+playBtn.addEventListener("click", resetAutoSleep);
+playerVolumeRange.addEventListener("input", resetAutoSleep);
+playerSkipNextBtn.addEventListener("click", resetAutoSleep);
+playerSkipPrevBtn.addEventListener("click", resetAutoSleep);
+
+/**
+ * DOWNLOAD MUSIC
+ */
+
+const downloadBtn = document.querySelector("[data-download]");
+
+const downloadMusic = function () {
+  const currentMusicData = musicData[currentMusic];
+  const musicFileName = currentMusicData.title.replace(/\s/g, "_") + ".mp3";
+
+  // Create an anchor element to trigger the download
+  const downloadLink = document.createElement("a");
+  downloadLink.href = currentMusicData.musicPath;
+  downloadLink.download = musicFileName;
+  downloadLink.click();
+}
+
+downloadBtn.addEventListener("click", downloadMusic);
+
+
+
+
