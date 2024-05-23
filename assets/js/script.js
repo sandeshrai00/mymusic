@@ -355,26 +355,17 @@ shuffleBtn.addEventListener("click", shuffle);
  */
 const nextBtn = document.querySelector("[data-skip-next]");
 
-const nextMusic = function () {
-  if (repeatMode === "repeat_one") {
-    audioSource.currentTime = 0;
-    playMusic();
-  } else if (isShuffled) {
-    let randomMusic = Math.floor(Math.random() * musicData.length);
-    currentMusic = randomMusic;
-    changePlayerInfo();
-    changePlaylistItem();
+const repeat = function () {
+  if (!audioSource.loop) {
+    audioSource.loop = true;
+    this.classList.add("active");
   } else {
-    lastPlayedMusic = currentMusic;
-    currentMusic++;
-    if (currentMusic === musicData.length) currentMusic = 0;
-    changePlayerInfo();
-    changePlaylistItem();
+    audioSource.loop = false;
+    this.classList.remove("active");
   }
 }
 
-nextBtn.addEventListener("click", nextMusic);
-
+playerRepeatBtn.addEventListener("click", repeat);
 /**
  * SKIP PREVIOUS MUSIC
  */
