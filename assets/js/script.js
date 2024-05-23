@@ -457,7 +457,7 @@ const startAutoSleep = () => {
     // Pause music
     audioSource.pause();
     playBtn.classList.remove("active");
-  }, 1 * 60 * 1000); // 5 minutes
+  }, 40 * 60 * 1000); // 5 minutes
 };
 
 // Function to reset auto-sleep countdown on user interaction
