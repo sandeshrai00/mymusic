@@ -124,8 +124,6 @@ const addEventOnElements = function (elements, eventType, callback) {
   }
 }
 
-
-
 /**
  * PLAYLIST
  *
@@ -149,8 +147,6 @@ for (let i = 0, len = musicData.length; i < len; i++) {
   `;
 }
 
-
-
 /**
  * PLAYLIST MODAL SIDEBAR TOGGLE
  *
@@ -169,8 +165,6 @@ const togglePlaylist = function () {
 }
 
 addEventOnElements(playlistTogglers, "click", togglePlaylist);
-
-
 
 /**
  * PLAYLIST ITEM
@@ -193,9 +187,8 @@ addEventOnElements(playlistItems, "click", function () {
   lastPlayedMusic = currentMusic;
   currentMusic = Number(this.dataset.playlistItem);
   changePlaylistItem();
+  changePlayerInfo();
 });
-
-
 
 /**
  * PLAYER
@@ -232,7 +225,7 @@ addEventOnElements(playlistItems, "click", changePlayerInfo);
 const playerDuration = document.querySelector("[data-duration]");
 const playerSeekRange = document.querySelector("[data-seek]");
 
-/** pass seconds and get timcode formate */
+/** pass seconds and get timecode format */
 const getTimecode = function (duration) {
   const minutes = Math.floor(duration / 60);
   const seconds = Math.ceil(duration - (minutes * 60));
@@ -246,8 +239,6 @@ const updateDuration = function () {
 }
 
 audioSource.addEventListener("loadeddata", updateDuration);
-
-
 
 /**
  * PLAY MUSIC
@@ -273,10 +264,9 @@ const playMusic = function () {
 
 playBtn.addEventListener("click", playMusic);
 
-
 /** update running time while playing music */
 
-const playerRunningTime = document.querySelector("[data-running-time");
+const playerRunningTime = document.querySelector("[data-running-time]");
 
 const updateRunningTime = function () {
   playerSeekRange.value = audioSource.currentTime;
@@ -285,8 +275,6 @@ const updateRunningTime = function () {
   updateRangeFill();
   isMusicEnd();
 }
-
-
 
 /**
  * RANGE FILL WIDTH
@@ -306,8 +294,6 @@ const updateRangeFill = function () {
 
 addEventOnElements(ranges, "input", updateRangeFill);
 
-
-
 /**
  * SEEK MUSIC
  *
@@ -321,8 +307,6 @@ const seek = function () {
 
 playerSeekRange.addEventListener("input", seek);
 
-
-
 /**
  * END MUSIC
  */
@@ -334,10 +318,11 @@ const isMusicEnd = function () {
     playerSeekRange.value = audioSource.currentTime;
     playerRunningTime.textContent = getTimecode(audioSource.currentTime);
     updateRangeFill();
+    skipNext(); // Auto play the next song when current song ends
   }
 }
 
-
+audioSource.addEventListener("ended", isMusicEnd);
 
 /**
  * SKIP TO NEXT MUSIC
@@ -360,8 +345,6 @@ const skipNext = function () {
 
 playerSkipNextBtn.addEventListener("click", skipNext);
 
-
-
 /**
  * SKIP TO PREVIOUS MUSIC
  */
@@ -383,8 +366,6 @@ const skipPrev = function () {
 
 playerSkipPrevBtn.addEventListener("click", skipPrev);
 
-
-
 /**
  * SHUFFLE MUSIC
  */
@@ -405,8 +386,6 @@ const shuffle = function () {
 
 playerShuffleBtn.addEventListener("click", shuffle);
 
-
-
 /**
  * REPEAT MUSIC
  */
@@ -424,8 +403,6 @@ const repeat = function () {
 }
 
 playerRepeatBtn.addEventListener("click", repeat);
-
-
 
 /**
  * MUSIC VOLUME
@@ -450,7 +427,6 @@ const changeVolume = function () {
 }
 
 playerVolumeRange.addEventListener("input", changeVolume);
-
 
 /**
  * MUTE MUSIC
@@ -481,17 +457,18 @@ const startAutoSleep = () => {
     // Pause music
     audioSource.pause();
     playBtn.classList.remove("active");
-  }, 60 * 60 * 1000); // 5 minutes
+  }, 1 * 60 * 1000); // 5 minutes
 };
 
 // Function to reset auto-sleep countdown on user interaction
 const resetAutoSleep = () => {
-  startAutoSleep();
-  // Add any additional interactions you want to reset auto-sleep here
+  if (autoSleepBtn.classList.contains("active")) {
+    startAutoSleep();
+  }
 };
 
 // Attach event listener to button for toggling auto-sleep
-autoSleepBtn.addEventListener("click", () => {
+autoSleepBtn.addEventListener("click", () A=> {
   autoSleepBtn.classList.toggle("active");
   if (autoSleepBtn.classList.contains("active")) {
     startAutoSleep();
@@ -524,7 +501,3 @@ const downloadMusic = function () {
 }
 
 downloadBtn.addEventListener("click", downloadMusic);
-
-
-
-
