@@ -312,23 +312,20 @@ const isMusicEnd = function () {
  *
  * repeat one music or all music when click repeat button
  */
-const repeatBtn = document.querySelector("[data-repeat]");
-
-let repeatMode = "repeat";
+const playerRepeatBtn = document.querySelector("[data-repeat]");
 
 const repeat = function () {
-  if (repeatMode === "repeat") {
-    repeatMode = "repeat_one";
-    repeatBtn.classList.add("active");
-    repeatBtn.textContent = "repeat_one";
+  if (!audioSource.loop) {
+    audioSource.loop = true;
+    this.classList.add("active");
   } else {
-    repeatMode = "repeat";
-    repeatBtn.classList.remove("active");
-    repeatBtn.textContent = "repeat";
+    audioSource.loop = false;
+    this.classList.remove("active");
   }
 }
 
-repeatBtn.addEventListener("click", repeat);
+playerRepeatBtn.addEventListener("click", repeat);
+
 
 /**
  * SHUFFLE
